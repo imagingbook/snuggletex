@@ -1,0 +1,6 @@
+Wilbur:
+
+* Very elaborate, mainly aimed at math translation to XML.
+* Problem with \ref command (not registered, marked as "text").
+* Quite a few dependencies!
+* Look at definitions in uk.ac.ed.ph.snuggletex.definitions.CorePackageDefinitions
