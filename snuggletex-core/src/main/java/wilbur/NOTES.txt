@@ -4,3 +4,6 @@ Wilbur:
 * Problem with \ref command (not registered, marked as "text").
 * Quite a few dependencies!
 * Look at definitions in uk.ac.ed.ph.snuggletex.definitions.CorePackageDefinitions
+
+* see https://www2.ph.ed.ac.uk/snuggletex/documentation/overview-and-features.html
+* http://snuggletex.sourceforge.net/maven/xref/index.html
