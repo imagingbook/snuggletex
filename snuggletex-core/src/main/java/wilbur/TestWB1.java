@@ -8,9 +8,15 @@ package wilbur;
 import uk.ac.ed.ph.snuggletex.SnuggleInput;
 import uk.ac.ed.ph.snuggletex.SnuggleEngine;
 import uk.ac.ed.ph.snuggletex.SnuggleSession;
+import uk.ac.ed.ph.snuggletex.tokens.ArgumentContainerToken;
+import uk.ac.ed.ph.snuggletex.tokens.CommandToken;
+import uk.ac.ed.ph.snuggletex.tokens.EnvironmentToken;
+import uk.ac.ed.ph.snuggletex.tokens.FlowToken;
+import uk.ac.ed.ph.snuggletex.tokens.SimpleToken;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -30,58 +36,123 @@ import org.w3c.dom.NodeList;
  */
 public final class TestWB1 {
 	
-//	static String inputString = "$$ x+2=3 $$";
+//	static String inputString = "Math text $$ \\sin(x+1)+2=3 $$";
 //	static String inputString = "This is plain text with some $math code1$ and \\($ math code2 \\) in it.";
 	static String inputString = "This is \\emph{emphasized text content} and a \\ref{reFerence}.";
+//	static String inputString = "This is \\verb!verbatim stuff! and some text.";
+//	static String inputString = "This is \\textbf{bold text with \\emph{nested emph} text}.";	// does not nest!!
+//	static String inputString = "This is \\begin{verbatim}verbatim  text \\ref{reFerence} \\end{verbatim} followed by regular text}.";	
     
     public static void main(String[] args) throws IOException {
+    	
+    	System.out.println("input = |" + inputString + "|");
+    	
         /* Create vanilla SnuggleEngine and new SnuggleSession */
         SnuggleEngine engine = new SnuggleEngine();
         SnuggleSession session = engine.createSession();
         
         /* Parse some very basic Math Mode input */
         SnuggleInput input = new SnuggleInput(inputString);
-        session.parseInput(input);
+        boolean success = session.parseInput(input);
+        System.out.println("Parsing success: " + success);
         
+        System.out.println("Parsed tokens: ");
+        List<FlowToken> tokens = session.getParsedTokens();
+        for (FlowToken t : tokens) {
+        	//System.out.println("  " + t.toString());
+        	//System.out.format("  type=%s, mode=%s class=%s\n", t.getType().toString(), t.getLatexMode(), t.getClass().getSimpleName());
+        	System.out.println(toString(t));
+        }
+        System.out.println();
+        
+        // -------------------
         
         NodeList nodes = session.buildDOMSubtree();
+        
+        if (nodes == null) {
+        	System.out.println("Could not build DOM Tree!");
+        	return;
+        }
+        
         System.out.println("NodeList length = " + nodes.getLength());
+        System.out.println("\nDOM Tree: ");
         for (int i = 0; i < nodes.getLength(); i++) {
         	Node n = nodes.item(i);
-        	//System.out.println(i + ": " + n.toString());
         	traverse(n, 0);
         }
         
         /* Convert the results to an XML String, which in this case will
          * be a single MathML <math>...</math> element. */
-        String xmlString = session.buildXMLString();
-        System.out.println("Input " + input.getString() + " was converted to:\n" + xmlString);
+//        String xmlString = session.buildXMLString();
+//        System.out.println("Input " + input.getString() + " was converted to:\n" + xmlString);
     }
     
+    // -----------------------------------------------------------------------
+    
+//	static void traverse(Node n, int level) {
+////		System.out.format("%s%s: <%s> id=%d (%s)\n", 
+////				makeIndentString(level), 
+////				n.getClassName(), 
+////				n.stringify(), n.getId(), 
+////				(n.getPosition() == null) ? "**NULL**" : n.getPosition().toString());	// wilbur: STRANGE - TextNode has null position!
+//		String text = n.getTextContent();
+//		
+//		System.out.println(makeIndentString(level) + n.toString() + " " + text);
+//		NamedNodeMap attributes = n.getAttributes();
+//		if (attributes != null) {
+//			for (int j = 0; j < attributes.getLength(); j++) {
+//				Node na = attributes.item(j);
+//				System.out.println(makeIndentString(level) + ">>> " + na.toString());
+//			}
+//		}
+//		
+//		NodeList children = n.getChildNodes();
+//		for (int i = 0; i < children.getLength(); i++) {
+//			Node c = children.item(i);
+//			traverse(c, level + 1);
+//		}
+//	}
+	
 	static void traverse(Node n, int level) {
-//		System.out.format("%s%s: <%s> id=%d (%s)\n", 
-//				makeIndentString(level), 
-//				n.getClassName(), 
-//				n.stringify(), n.getId(), 
-//				(n.getPosition() == null) ? "**NULL**" : n.getPosition().toString());	// wilbur: STRANGE - TextNode has null position!
-		String text = n.getTextContent();
-		
-		
-		
-		System.out.println(makeIndentString(level) + n.toString() + " " + text);
-		NamedNodeMap attributes = n.getAttributes();
-		if (attributes != null) {
-			for (int j = 0; j < attributes.getLength(); j++) {
-				Node na = attributes.item(j);
-				System.out.println(makeIndentString(level) + ">>> " + na.toString());
-			}
-		}
-		
+		System.out.println(toString(n, level));
 		NodeList children = n.getChildNodes();
 		for (int i = 0; i < children.getLength(); i++) {
 			Node c = children.item(i);
 			traverse(c, level + 1);
 		}
+	}
+	
+	static String toString(Node n, int level) {
+		String nodeStr =
+				String.format("Node %s (type=%d): |%s|", n.getNodeName(), n.getNodeType(), n.getNodeValue());
+		return makeIndentString(level) + nodeStr;
+	}
+	
+	
+	static String toString(FlowToken t) {
+		return String.format("  FlowToken class=%s: |%s|", t.getClass().getSimpleName(), t.getSlice().extract());
+//		if (t instanceof SimpleToken) {
+//			SimpleToken st = (SimpleToken) t;
+//			return String.format("SimpleToken %s", st.getSlice().extract());
+//		}
+//		else if (t instanceof CommandToken) {
+//			CommandToken ct = (CommandToken) t;
+//			//ArgumentContainerToken[] act = ct.getArguments();
+//			for (ArgumentContainerToken act : ct.getArguments()) {
+//				System.out.println("  act = " + act.toString());
+//				for (FlowToken ft : act.getContents()) {
+//					System.out.println("    ft = " + toString(ft));
+//				}
+//				
+//			}
+//			return String.format("CommandToken cmd=%s", ct.getCommand().getTeXName());
+//		}
+//		else if (t instanceof EnvironmentToken) {
+//			EnvironmentToken et = (EnvironmentToken) t;
+//			return String.format("EnvironmentToken cmd=%s", et.getEnvironment().getTeXName());
+//		}
+//		else return t.toString();
+			
 	}
 	
 

@@ -278,6 +278,7 @@ public final class SnuggleSession implements SessionContext {
      *   input LaTeX and if the session was configured to fail on the first error. 
      */
     public boolean buildDOMSubtree(final Element targetRoot, final DOMOutputOptions options) {
+    	System.out.println("wilbur: buildDOMSubtree(Element, DOMOutputOptions)");
         ConstraintUtilities.ensureNotNull(targetRoot, "targetRoot");
         ConstraintUtilities.ensureNotNull(options, "options");
         try {
@@ -298,6 +299,7 @@ public final class SnuggleSession implements SessionContext {
      *   input LaTeX and if the session was configured to fail on the first error. 
      */
     public boolean buildDOMSubtree(final Element targetRoot) {
+    	System.out.println("wilbur: buildDOMSubtree(Element)");
         return buildDOMSubtree(targetRoot, defaultDOMOutputOptions);
     }
     
@@ -314,6 +316,7 @@ public final class SnuggleSession implements SessionContext {
      *   the first error. 
      */
     public NodeList buildDOMSubtree() {
+    	System.out.println("wilbur: buildDOMSubtree()");
         return buildDOMSubtree(defaultDOMOutputOptions);
     }
     
@@ -332,6 +335,7 @@ public final class SnuggleSession implements SessionContext {
      *   the first error. 
      */
     public NodeList buildDOMSubtree(final DOMOutputOptions options) {
+    	System.out.println("wilbur: buildDOMSubtree(DOMOutputOptions)");
         ConstraintUtilities.ensureNotNull(options, "DOMOutputOptions");
         Document document = XMLUtilities.createNSAwareDocumentBuilder().newDocument();
         Element temporaryRoot = document.createElementNS(SnuggleConstants.SNUGGLETEX_NAMESPACE, "root");
