@@ -38,9 +38,9 @@ public final class TestWB1 {
 	
 //	static String inputString = "Math text $$ \\sin(x+1)+2=3 $$";
 //	static String inputString = "This is plain text with some $math code1$ and \\($ math code2 \\) in it.";
-	static String inputString = "This is \\emph{emphasized text content} and a \\ref{reFerence}.";
+//	static String inputString = "This is \\emph{emphasized text content} and a \\ref{reference}.";
 //	static String inputString = "This is \\verb!verbatim stuff! and some text.";
-//	static String inputString = "This is \\textbf{bold text with \\emph{nested emph} text}.";	// does not nest!!
+	static String inputString = "This is \\textbf{bold text with \\emph{nested emph} text}.";	// does not nest!!
 //	static String inputString = "This is \\begin{verbatim}verbatim  text \\ref{reFerence} \\end{verbatim} followed by regular text}.";	
     
     public static void main(String[] args) throws IOException {
